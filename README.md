@@ -1,68 +1,55 @@
-# GameVault v1 · PR1 · MP0486 Accés a dades
+# GameVault — PR1 AEA1
 
-Prova pràctica del RA1. Nom i cognoms: **_________________________**
+**Module:** 0486 — Accés a dades
+**Project:** GameVault
+**Assignment:** PR1_AEA1
 
-El projecte ja compila i té tota l'estructura feta. Hi falten trossos de codi marcats amb
-`TODO PR1-01` … `TODO PR1-13`. Cada TODO explica què has de fer i et diu de quin exemple de classe surt.
+## 1. Project description
 
-## Com començar
+GameVault is a Java application for managing video game information and storing game data in different file formats. The project implements CSV and JSON data access, file backups, operation logging, Java object serialization, and random-access files.
 
-1. Obre la carpeta `gamevault-pr1` amb **IntelliJ IDEA** (projecte Maven, Java 21).
-2. Busca tots els forats: menú **View → Tool Windows → TODO**, o `Ctrl+Maj+F` i cerca `PR1-`.
-3. Executa les proves: clic dret a `src/test/java` → **Run 'All Tests'** (o `mvn test`).
-   Al principi gairebé totes surten en vermell. Cada prova porta el codi del TODO al nom
-   (per exemple, `PR1-06 · quatre incidències…`): així saps quin forat t'ha fallat.
-4. Quan tot estigui en verd, executa `GameVaultApp` (▶ al costat del `main`) i compara la sortida
-   amb la de l'enunciat.
+The project uses Maven to manage dependencies and run automated tests.
 
-## Normes
+## 2. Questions
 
-- **No modifiquis** cap classe de prova excepte `ProvesPropiesTest`, ni la classe `GameVaultApp`.
-- No canviïs el nom ni els paràmetres dels mètodes que has de completar.
-- Fes un commit cada vegada que tanquis un TODO (missatge: `PR1-06: llegeix el CSV amb incidències`).
+### Question 1: What is the difference between sequential access and random access? When is each method more suitable?
 
-## Forats que has de completar
+Sequential access reads data in order, from the beginning of a file to the end. It is useful when processing an entire file, such as importing all games from a CSV file.
 
-| TODO | Classe | Què has de fer | Exemple de classe |
-|---|---|---|---|
-| PR1-01 | `model/Joc` | Validar títol, hores i nota | Sessió 1 |
-| PR1-02 | `fs/Magatzem` | Crear les carpetes import, export i backup | Sessió 2 · Ex3 |
-| PR1-03 | `fs/Magatzem` | Còpia de seguretat amb marca de temps | Sessió 2 · Ex4 |
-| PR1-04 | `fs/Magatzem` | Mida total amb `Files.walk` | Sessió 2 · Ex5 |
-| PR1-05 | `io/RegistreOperacions` | Afegir una línia al log sense esborrar-lo | Sessió 5 · Ex1 |
-| PR1-06 | `io/CsvJocDao` | Llegir el CSV brut amb incidències | Sessió 5 · Ex3 |
-| PR1-07 | `io/CsvJocDao` | Escriure el catàleg en CSV | Sessió 5 · Ex4 |
-| PR1-08 | `io/JsonJocDao` | Configurar Jackson i escriure JSON | Sessió 6 · Ex4 |
-| PR1-09 | `io/JsonJocDao` | Llegir JSON | Sessió 6 · Ex4 |
-| PR1-10 | `servei/Convertidor` | Desar per extensió i convertir | Sessions 5 i 6 |
-| PR1-11 | `io/CauCataleg` i `model/Joc` | Serialitzar i desserialitzar | Sessió 6 · Ex1 |
-| PR1-12 | `io/IndexHores` | Llegir les hores amb `seek` | Sessió 5 · Ex5 |
-| PR1-13 | `io/IndexHores` | Sumar hores sense reescriure el fitxer | Sessió 5 · Ex5 |
-| PR1-14 | `ProvesPropiesTest` | Escriure dues proves teves | — |
-| PR1-15 | Aquest README | Respondre les tres preguntes de sota | — |
+Random access allows a program to move directly to a specific position in a file without reading all the preceding data. In GameVault, `RandomAccessFile` is used to read or update the hours played by a game in `hores.dat`.
 
-## PR1-15 · Les meves respostes
+Random access is especially useful when records have a fixed size and only a particular record needs to be accessed or modified. Sequential access is generally more suitable when the application needs to process most or all of the file.
 
-Respon amb les teves paraules (mínim 4 línies cadascuna).
+### Question 2: If you were developing an online store, would you choose JSON or Java serialization to store product information? Explain your decision.
 
-**1. Accés seqüencial i accés aleatori.** Per què `sumaHores` no necessita reescriure tot el fitxer
-`hores.dat`? Què faries si haguessis de sumar hores a un joc dins de `catalog.csv`? Quan et compensa
-cada forma d'accés?
+I would choose JSON to store and exchange product information in an online store. JSON is human-readable, widely supported, and compatible with applications written in different programming languages. This makes it suitable for communicating with web applications, mobile applications, and external services.
 
-> Resposta:
+Java serialization can be useful for temporarily storing Java objects, such as in a cache, when they need to be restored by a Java application. However, it is more dependent on Java classes and their versions, and it is less suitable for interoperability with other systems.
 
-**2. Triar format.** GameVault ha d'enviar el catàleg a una botiga web i també vol una cau per arrencar
-més de pressa. Quin format faries servir per a cada cas (CSV, JSON o serialització Java) i per què?
+Therefore, I would use JSON for persistent product data and communication between services, while considering Java serialization only for specific internal caching needs.
 
-> Resposta:
+### Question 3: What happens when a CSV file contains an invalid date? How should the application handle this situation?
 
-**3. Excepcions.** Explica què passa en el teu programa quan el CSV té una línia amb la data mal escrita.
-Per què el programa no s'atura? On es guarda el motiu?
+When a CSV row contains a date that cannot be parsed, the application should detect the invalid value and handle the error without terminating the entire import process.
 
-> Resposta:
+The invalid row should be reported or recorded in the operation log, where supported by the implementation. The application can then continue processing valid rows, allowing as much valid data as possible to be imported.
 
-## Ús d'eines d'IA
+This approach makes the application more robust and helps users identify and correct problems in the source file.
 
-Indica si has fet servir alguna eina d'IA, per a què i en quins TODO. Si no n'has fet servir, escriu-ho.
+## 3. Testing
 
-> Declaració:
+The project includes automated tests for the implemented functionality, including two additional tests in `ProvesPropiesTest`.
+
+To run the tests, execute the following command from the project root:
+
+```bash
+mvn clean test
+```
+
+The tests check the expected behaviour of the project and help identify implementation errors.
+
+## 4. Use of artificial intelligence
+
+I used ChatGPT as a support tool to understand the assignment requirements, implement parts of the code, and troubleshoot errors. I used it for assistance with CSV reading and invalid data handling (PR1-06), JSON reading and writing with Jackson (PR1-08 and PR1-09), conversion between CSV and JSON (PR1-10), Java serialization (PR1-11), random-access files (PR1-12 and PR1-13), and timestamped backups (PR1-03).
+
+I also used the tool to review explanations and improve my understanding of the implementation. I ran the Maven tests to check the code and resolve problems found during development. I reviewed the final implementation and README before submission.
